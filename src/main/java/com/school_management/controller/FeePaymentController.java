@@ -36,11 +36,12 @@ public class FeePaymentController {
     }
 
     @PutMapping("/update/{amount}")
-    public ResponseDTO updateById(@PathVariable final int amount , @RequestBody final FeePayment feePayment) {
-        return this.feePaymentService.updateById(feePayment,amount);
+    public ResponseDTO updateById(@PathVariable final int amount, @RequestBody final FeePayment feePayment) {
+        return this.feePaymentService.updateById(feePayment, amount);
     }
-    @GetMapping("/sc/{id}")
-    public List<SchoolFeeDetailsDTO> t(@PathVariable int id) {
-        return this.feePaymentService.saler(id);
+
+    @GetMapping("/feeDetails")
+    public List<SchoolFeeDetailsDTO> fee() {
+        return this.feePaymentService.getfeepayment();
     }
 }

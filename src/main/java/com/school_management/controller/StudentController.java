@@ -1,11 +1,8 @@
 package com.school_management.controller;
 
 import com.school_management.dto.ResponseDTO;
-import com.school_management.dto.SchoolDetailsDTO;
-import com.school_management.dto.SchoolFeeDetailsDTO;
 import com.school_management.dto.StudentDetailsDTO;
 import com.school_management.entity.Student;
-import com.school_management.entity.StudentCourse;
 import com.school_management.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,21 +47,37 @@ public class StudentController {
 //    }
 
     @GetMapping("/pagination")
-    public Page<Student> getStudentCourse(@RequestParam final int pageIndex, @RequestParam final int pageSize){
-        return this.studentService.getStudentCourse(pageIndex,pageSize);
+    public Page<Student> getStudentCourse(@RequestParam final int pageIndex, @RequestParam final int pageSize) {
+        return this.studentService.getStudentCourse(pageIndex, pageSize);
     }
+
     @GetMapping("/pagination1")
-    public Page<Student> getStudentCoursePage(@RequestParam final int pageIndex, @RequestParam final int pageSize,@RequestParam final String field,@RequestParam final boolean direction ){
-        return this.studentService.getStudentCoursePage(pageIndex,pageSize,field,direction);
+    public Page<Student> getStudentCoursePage(@RequestParam final int pageIndex, @RequestParam final int pageSize, @RequestParam(defaultValue = "id") final String field, @RequestParam final boolean direction) {
+        return this.studentService.getStudentCoursePage(pageIndex, pageSize, field, direction);
+    }
+//
+//    @PostMapping("/pagination1")
+//    public Page<Student> getStudentCoursePage(@RequestBody PageDTO requestDto) {
+//        return this.studentService.getStudentCoursePage(
+//                requestDto.getPageIndex(),
+//                requestDto.getPageSize(),
+//                requestDto.getField(),
+//                requestDto.isDirection()
+//        );
+//    }
+
+    @GetMapping("/search")
+    public List<Student> search(@RequestParam(required = false) final String keyword) {
+        return this.studentService.search(keyword);
     }
 
-@GetMapping("/search")
-    public List<Student>r(@RequestParam(required = false) final String z){
-        return this.studentService.search(z);
-}
     @GetMapping("/searchPag")
-    public Page<Student>page(@RequestParam final int pageIndex, @RequestParam final int pageSize,@RequestParam final String keyword){
-        return this.studentService.searchDetails(pageIndex,pageSize,keyword);
+    public Page<Student> page(@RequestParam final int pageIndex, @RequestParam final int pageSize, @RequestParam final String keyword) {
+        return this.studentService.searchDetails(pageIndex, pageSize, keyword);
     }
 
+    @GetMapping("/student/{id}")
+    public List<StudentDetailsDTO> getStudent(@PathVariable int id) {
+        return studentService.getStudentWithCourses(id);
+    }
 }

@@ -2,8 +2,6 @@ package com.school_management.service;
 
 
 import com.school_management.dto.ResponseDTO;
-import com.school_management.dto.SchoolDTO;
-import com.school_management.entity.School;
 import com.school_management.entity.TutorCourse;
 import com.school_management.exception.UserNotFoundException;
 import com.school_management.repository.TutorCourseRepository;
@@ -13,15 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Service
 public class TutorCourseService {
     @Autowired
     private TutorCourseRepository tutorCourseRepository;
-@Transactional
+
+    @Transactional
     public ResponseDTO createTutorCourse(final TutorCourse tutorCourse) {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.tutorCourseRepository.save(tutorCourse));
     }

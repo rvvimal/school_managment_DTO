@@ -9,7 +9,6 @@ import lombok.*;
 public class SchoolDTO {
     private Integer schoolId;
     private String schoolName;
-//    private  int CourseId;''
     private int totalCourse;
 
 }

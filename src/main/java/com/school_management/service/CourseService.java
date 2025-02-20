@@ -1,9 +1,7 @@
 package com.school_management.service;
 
 import com.school_management.dto.ResponseDTO;
-import com.school_management.dto.SchoolDTO;
 import com.school_management.entity.Course;
-import com.school_management.entity.School;
 import com.school_management.exception.UserNotFoundException;
 import com.school_management.repository.CourseRepository;
 import com.school_management.util.Constant;
@@ -11,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CourseService {

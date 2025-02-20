@@ -1,20 +1,8 @@
 package com.school_management.repository;
 
-import com.school_management.dto.SchoolDTO;
-
-import com.school_management.dto.SchoolDetailsDTO;
-import com.school_management.dto.SchoolFeeDetailsDTO;
 import com.school_management.entity.School;
-import com.school_management.entity.StudentCourse;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Spliterator;
 
 
 @Repository

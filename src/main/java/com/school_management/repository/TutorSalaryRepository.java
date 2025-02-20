@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface TutorSalaryRepository extends JpaRepository<TutorSalary, Integer> {
 
-
     List<TutorSalary> findByTutor_School_Id(int id);
 }

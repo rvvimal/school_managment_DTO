@@ -1,10 +1,9 @@
 package com.school_management.controller;
 
-import com.school_management.dto.*;
+import com.school_management.dto.ResponseDTO;
 import com.school_management.entity.School;
 import com.school_management.service.SchoolService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

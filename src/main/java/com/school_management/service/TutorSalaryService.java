@@ -2,9 +2,7 @@ package com.school_management.service;
 
 
 import com.school_management.dto.ResponseDTO;
-import com.school_management.dto.SchoolDTO;
 import com.school_management.dto.TutorSalaryDTO;
-import com.school_management.entity.School;
 import com.school_management.entity.TutorSalary;
 import com.school_management.exception.UserNotFoundException;
 import com.school_management.repository.TutorSalaryRepository;
@@ -66,16 +64,19 @@ public class TutorSalaryService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, this.tutorSalaryRepository.save(tutorSalaryObject));
     }
 
-    public List<TutorSalaryDTO> sal(int id) {
+
+    public List<TutorSalaryDTO> amount(int id) {
         List<TutorSalaryDTO> tutorSalaryDTOS = new ArrayList<>();
-        List<TutorSalary> tutorSalaries=this.tutorSalaryRepository.findByTutor_School_Id(id);
+        List<TutorSalary> tutorSalaries = this.tutorSalaryRepository.findByTutor_School_Id(id);
         for (TutorSalary tutorSalary : tutorSalaries) {
-            TutorSalaryDTO dto = new TutorSalaryDTO();
-           dto.setTutorId(tutorSalary.getTutor().getId());
-           dto.setTutorName(tutorSalary.getTutor().getName());
-           dto.setSchoolId(tutorSalary.getTutor().getId());
-           dto.setAmount(tutorSalary.getAmount());
-            tutorSalaryDTOS.add(dto);
+            if (tutorSalary.getAmount() > 2000) {
+                TutorSalaryDTO dto = new TutorSalaryDTO();
+                dto.setTutorId(tutorSalary.getTutor().getId());
+                dto.setTutorName(tutorSalary.getTutor().getName());
+                dto.setSchoolId(tutorSalary.getTutor().getSchool().getId());
+                dto.setAmount(tutorSalary.getAmount());
+                tutorSalaryDTOS.add(dto);
+            }
         }
         return tutorSalaryDTOS;
     }

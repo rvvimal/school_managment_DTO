@@ -2,15 +2,10 @@ package com.school_management.controller;
 
 
 import com.school_management.dto.ResponseDTO;
-import com.school_management.dto.TutorSalaryDTO;
 import com.school_management.entity.Tutor;
 import com.school_management.service.TutorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tutor")

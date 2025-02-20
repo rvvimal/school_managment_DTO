@@ -41,8 +41,9 @@ public class TutorSalaryController {
         return this.tutorSalaryService.updateById(tutorSalary, id);
 
     }
+
     @GetMapping("/tutorAmount/{id}")
-    public List<TutorSalaryDTO> t(@PathVariable int id){
-        return this.tutorSalaryService.sal(id);
+    public List<TutorSalaryDTO> amount(@PathVariable int id) {
+        return this.tutorSalaryService.amount(id);
     }
 }

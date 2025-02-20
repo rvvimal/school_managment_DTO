@@ -1,10 +1,8 @@
 package com.school_management.service;
 
 import com.school_management.dto.ResponseDTO;
-import com.school_management.dto.SchoolDetailsDTO;
-import com.school_management.dto.SchoolFeeDetailsDTO;
+import com.school_management.dto.StudentDetailsDTO;
 import com.school_management.entity.Student;
-import com.school_management.entity.StudentCourse;
 import com.school_management.exception.UserNotFoundException;
 import com.school_management.repository.StudentRepository;
 import com.school_management.util.Constant;
@@ -17,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -83,26 +80,36 @@ public class StudentService {
 
 
     public Page<Student> getStudentCourse(final int pageIndex, final int pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex-1, pageSize);
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
         return this.studentRepository.findAll(pageable);
     }
 
-    public Page<Student> getStudentCoursePage(final int pageIndex, final int pageSize,final String field,final boolean direction) {
+    public Page<Student> getStudentCoursePage(final int pageIndex, final int pageSize, final String field, final boolean direction) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(direction ? Sort.Direction.ASC : Sort.Direction.DESC, field));
 //        Pageable pageable = PageRequest.of(pageIndex, pageSize,sort);
         return this.studentRepository.findAll(pageable);
     }
-    public List<Student>search(String z){
+//public Page<Student> getStudentCoursePage(final int pageIndex, final int pageSize, final String field, final boolean direction) {
+//    String sortField = (field == null || field.isEmpty()) ? "id" : field; // Default sorting by "id"
+//    Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(direction ? Sort.Direction.ASC : Sort.Direction.DESC, sortField));
+//    return this.studentRepository.findAll(pageable);
+//}
+
+    public List<Student> search(String keyword) {
 //        if(z==null||z.trim().isEmpty()){
 //            return null;
 //        }else {
-            return this.studentRepository.findByStudent_SchoolName(z);
+        return this.studentRepository.findByStudent_SchoolName(keyword);
 //        }
     }
-    public Page<Student>searchDetails(int pageIndex,int pageSize,String keyword){
+
+    public Page<Student> searchDetails(int pageIndex, int pageSize, String keyword) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        return this.studentRepository.findByStudent_School(keyword,pageable);
+        return this.studentRepository.findByStudent_School(keyword, pageable);
 
     }
 
+    public List<StudentDetailsDTO> getStudentWithCourses(int id) {
+        return studentRepository.findStudentWithCourses(id);
+    }
 }
