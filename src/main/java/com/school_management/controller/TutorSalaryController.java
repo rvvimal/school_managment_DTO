@@ -5,45 +5,48 @@ import com.school_management.dto.ResponseDTO;
 import com.school_management.dto.TutorSalaryDTO;
 import com.school_management.entity.TutorSalary;
 import com.school_management.service.TutorSalaryService;
+import com.school_management.util.Constant;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/tutorSalary")
+@RequestMapping("/api/v1")
 public class TutorSalaryController {
     @Autowired
     private TutorSalaryService tutorSalaryService;
 
-    @PostMapping("/create")
-    private ResponseDTO createTutorSalary(@RequestBody final TutorSalary tutorSalary) {
-        return this.tutorSalaryService.createTutorSalary(tutorSalary);
+    @PostMapping("/tutorSalary")
+    private ResponseDTO createTutorSalary(@Valid @RequestBody final TutorSalary tutorSalary) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.tutorSalaryService.createTutorSalary(tutorSalary));
     }
 
-    @GetMapping("/retrieve")
+    @GetMapping("/tutorSalary")
     private ResponseDTO getAllTutorSalary() {
-        return this.tutorSalaryService.getAlltutorSalary();
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.tutorSalaryService.getAlltutorSalary());
     }
 
-    @GetMapping("/{tutorSalaryId}")
-    private ResponseDTO getTutorSalaryById(@PathVariable final int tutorSalaryId) {
-        return this.tutorSalaryService.findById(tutorSalaryId);
+    @GetMapping("/tutorSalary/{id}")
+    private ResponseDTO getTutorSalaryById(@PathVariable final int id) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.tutorSalaryService.findById(id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/tutorSalary/{id}")
     public ResponseDTO deleteTutorSalaryById(@PathVariable final int id) {
-        return this.tutorSalaryService.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, this.tutorSalaryService.deleteById(id));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseDTO updateById(@PathVariable final int id, @RequestBody final TutorSalary tutorSalary) {
-        return this.tutorSalaryService.updateById(tutorSalary, id);
+    @PutMapping("/tutorSalary/{id}")
+    public ResponseDTO updateById(@Valid @PathVariable final int id, @RequestBody final TutorSalary tutorSalary) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, this.tutorSalaryService.updateById(tutorSalary, id));
 
     }
 
-    @GetMapping("/tutorAmount/{id}")
+    @GetMapping("/tutorSalary/{id}/tutorAmount")
     public List<TutorSalaryDTO> amount(@PathVariable int id) {
-        return this.tutorSalaryService.amount(id);
+        return this.tutorSalaryService.getFeeAmount(id);
     }
 }

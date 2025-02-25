@@ -10,7 +10,7 @@ import lombok.Setter;
 @Table(name = "student_course")
 public class StudentCourse {
     @Id
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
     @ManyToOne
     @JoinColumn(name = "student_id")

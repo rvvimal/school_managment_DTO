@@ -3,38 +3,41 @@ package com.school_management.controller;
 import com.school_management.dto.ResponseDTO;
 import com.school_management.entity.School;
 import com.school_management.service.SchoolService;
+import com.school_management.util.Constant;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/school")
+@RequestMapping("/api/v1")
 public class SchoolController {
     @Autowired
     private SchoolService schoolService;
 
-    @PostMapping("/create")
-    private ResponseDTO createSchool(@RequestBody final School school) {
-        return this.schoolService.createSchool(school);
+    @PostMapping("/school")
+    private ResponseDTO createSchool(@Valid @RequestBody final School school) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.schoolService.createSchool(school));
     }
 
-    @GetMapping("/retrieve")
+    @GetMapping("/school")
     private ResponseDTO getAllSchool() {
-        return this.schoolService.getAllSchool();
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.schoolService.getAllSchool());
     }
 
-    @GetMapping("/{schoolId}")
-    private ResponseDTO getSchoolById(@PathVariable final int schoolId) {
-        return this.schoolService.findById(schoolId);
+    @GetMapping("/school/{id}")
+    private ResponseDTO getSchoolById(@PathVariable final int id) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.schoolService.findById(id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/school/{id}")
     public ResponseDTO deleteSchoolById(@PathVariable final int id) {
-        return this.schoolService.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, this.schoolService.deleteById(id));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseDTO updateById(@PathVariable final int id, @RequestBody final School school) {
-        return this.schoolService.updateById(school, id);
+    @PutMapping("/school/{id}")
+    public ResponseDTO updateById(@Valid @PathVariable final int id, @RequestBody final School school) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, this.schoolService.updateById(school, id));
     }
 //    @GetMapping("/schoolDetails/{id}")
 //    public List<SchoolDetailsDTO> getStudentAndTutorAndSchoolId(@PathVariable("id") int id) {

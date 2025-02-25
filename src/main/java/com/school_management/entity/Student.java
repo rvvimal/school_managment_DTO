@@ -1,6 +1,7 @@
 package com.school_management.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,17 +12,20 @@ import lombok.Setter;
 
 public class Student {
     @Id
-    @Column(name="id")
+    @Column(name = "id")
     private int id;
-    @Column(name="first_name")
+    @Size(min = 4, message = "Size should be greater than four")
+    @Column(name = "first_name")
     private String firstName;
-    @Column(name="last_name")
+    @Column(name = "last_name")
     private String lastName;
-    @Column(name="email")
+    @Size(min = 4, message = "Size should be greater than four")
+    @Column(name = "email")
     private String email;
-    @Column(name="contact_number")
+    @Column(name = "contact_number")
     private long contactNumber;
-    @Column(name="enrollment_date")
+    @Size(min = 4, message = "Size should be greater than four")
+    @Column(name = "enrollment_date")
     private String enrollmentDate;
 
     @ManyToOne()

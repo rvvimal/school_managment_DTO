@@ -3,33 +3,36 @@ package com.school_management.controller;
 import com.school_management.dto.ResponseDTO;
 import com.school_management.entity.TutorCourse;
 import com.school_management.service.TutorCourseService;
+import com.school_management.util.Constant;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/tutorCourse")
+@RequestMapping("/api/v1")
 public class TutorCourseController {
     @Autowired
     private TutorCourseService tutorCourseService;
 
-    @PostMapping("/create")
-    private ResponseDTO createTutorCourse(@RequestBody final TutorCourse tutorCourse) {
-        return this.tutorCourseService.createTutorCourse(tutorCourse);
+    @PostMapping("/tutorCourse")
+    private ResponseDTO createTutorCourse(@Valid @RequestBody final TutorCourse tutorCourse) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.tutorCourseService.createTutorCourse(tutorCourse));
     }
 
-    @GetMapping("/retrieve")
+    @GetMapping("/tutorCourse")
     private ResponseDTO getAllTutorCourse() {
-        return this.tutorCourseService.getAlltutorCourse();
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.tutorCourseService.getAlltutorCourse());
     }
 
-    @GetMapping("/{tutorCourseId}")
-    private ResponseDTO getTutorCourseById(@PathVariable final int tutorCourseId) {
-        return this.tutorCourseService.findById(tutorCourseId);
+    @GetMapping("/tutorCourse/{id}")
+    private ResponseDTO getTutorCourseById(@PathVariable final int id) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.tutorCourseService.findById(id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/tutorCourse/{id}")
     public ResponseDTO deleteTutorCourseById(@PathVariable final int id) {
-        return this.tutorCourseService.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, this.tutorCourseService.deleteById(id));
     }
 
 }

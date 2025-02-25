@@ -1,6 +1,5 @@
 package com.school_management.service;
 
-import com.school_management.dto.ResponseDTO;
 import com.school_management.dto.SchoolDTO;
 import com.school_management.dto.SchoolDetailsDTO;
 import com.school_management.dto.StudentCourseDTO;
@@ -13,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,30 +26,29 @@ public class StudentCourseService {
     private FeePaymentRepository feePaymentRepository;
 
     @Transactional
-    public ResponseDTO createStudentCourse(final StudentCourse studentCourse) {
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.studentCourseRepository.save(studentCourse));
+    public StudentCourse createStudentCourse(final StudentCourse studentCourse) {
+        return this.studentCourseRepository.save(studentCourse);
     }
 
-    public ResponseDTO getAllStudentCourse() {
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.studentCourseRepository.findAll());
+    public List<StudentCourse> getAllStudentCourse() {
+        return this.studentCourseRepository.findAll();
     }
 
-    public ResponseDTO findById(final int id) {
-        if (!this.studentCourseRepository.existsById(id)) {
-            throw new UserNotFoundException(Constant.ID_DOES_NOT_EXIST);
-        }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.studentCourseRepository.findById(id));
+    public StudentCourse findById(final int id) {
+        return this.studentCourseRepository.findById(id).orElseThrow(() -> new RuntimeException(Constant.ID_DOES_NOT_EXIST));
     }
 
 
-    public ResponseDTO deleteById(final int id) {
+    public String deleteById(final int id) {
         if (this.studentCourseRepository.existsById(id)) {
             this.studentCourseRepository.deleteById(id);
+        } else {
+            throw new UserNotFoundException(Constant.NOT_FOUND + " " + id);
         }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, Constant.REMOVE);
+        return Constant.REMOVE;
     }
 
-    public ResponseDTO retrieveAllStudentDetail() {
+    public List<StudentCourseDTO> retrieveAllStudentDetail() {
         List<StudentCourse> course = this.studentCourseRepository.findAll();
         List<StudentCourseDTO> studentDetails = new ArrayList<>();
         for (StudentCourse student1 : course) {
@@ -63,18 +59,13 @@ public class StudentCourseService {
             studentDTO.setSchoolName(student1.getStudent().getSchool().getName());
             studentDetails.add(studentDTO);
         }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, studentDetails);
+        return studentDetails;
 
 
     }
 
-    public Page<StudentCourse> getStudentCoursePage(final int pageIndex, final int pageSize, final String field) {
-        Sort sort = Sort.by(Sort.Direction.ASC, field);
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
-        return this.studentCourseRepository.findAll(pageable);
-    }
 
-    public Page<SchoolDetailsDTO> pages(int schoolId, int pageIndex, int pageSize) {
+    public Page<SchoolDetailsDTO> getSchoolPages(int schoolId, int pageIndex, int pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
         Page<StudentCourse> studentCourses = studentCourseRepository.findByStudent_School_Id(schoolId, pageable);
 
@@ -119,7 +110,7 @@ public class StudentCourseService {
 //        return dtoList;
 //    }
 
-    public SchoolDTO getCount(Integer id) {
+    public SchoolDTO getCourseCount(Integer id) {
         List<StudentCourse> students = this.studentCourseRepository.findByStudent_School_Id(id);
 
         if (!students.isEmpty()) {

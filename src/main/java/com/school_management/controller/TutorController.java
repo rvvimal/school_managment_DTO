@@ -4,38 +4,41 @@ package com.school_management.controller;
 import com.school_management.dto.ResponseDTO;
 import com.school_management.entity.Tutor;
 import com.school_management.service.TutorService;
+import com.school_management.util.Constant;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/tutor")
+@RequestMapping("/api/v1")
 public class TutorController {
     @Autowired
     private TutorService tutorService;
 
-    @PostMapping("/create")
-    private ResponseDTO createTutor(@RequestBody final Tutor tutor) {
-        return this.tutorService.createTutor(tutor);
+    @PostMapping("/tutor")
+    private ResponseDTO createTutor(@Valid @RequestBody final Tutor tutor) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.tutorService.createTutor(tutor));
     }
 
-    @GetMapping("/retrieve")
+    @GetMapping("/tutor")
     private ResponseDTO getAllTutor() {
-        return this.tutorService.getAlltutor();
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.tutorService.getAlltutor());
     }
 
-    @GetMapping("/id/{tutorId}")
-    private ResponseDTO getTutorById(@PathVariable final int tutorId) {
-        return this.tutorService.findById(tutorId);
+    @GetMapping("/tutor/{id}")
+    private ResponseDTO getTutorById(@PathVariable final int id) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.tutorService.findById(id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/tutor/{id}")
     public ResponseDTO deleteTutorById(@PathVariable final int id) {
-        return this.tutorService.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, this.tutorService.deleteById(id));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseDTO updateById(@PathVariable final int id, @RequestBody final Tutor tutor) {
-        return this.tutorService.updateById(tutor, id);
+    @PutMapping("/tutor/{id}")
+    public ResponseDTO updateById(@Valid @PathVariable final int id, @RequestBody final Tutor tutor) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, this.tutorService.updateById(tutor, id));
 
     }
 

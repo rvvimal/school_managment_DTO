@@ -1,6 +1,6 @@
 package com.school_management.service;
 
-import com.school_management.dto.ResponseDTO;
+import com.school_management.dto.PaginationResponse;
 import com.school_management.dto.StudentDetailsDTO;
 import com.school_management.entity.Student;
 import com.school_management.exception.UserNotFoundException;
@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,35 +22,31 @@ public class StudentService {
     private StudentRepository studentRepository;
 
     @Transactional
-    public ResponseDTO createStudent(final Student student) {
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE,
-                this.studentRepository.save(student));
+    public Student createStudent(final Student student) {
+        return this.studentRepository.save(student);
     }
 
-    public ResponseDTO getAllStudent() {
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE,
-                this.studentRepository.findAll());
+    public List<Student> getAllStudent() {
+        return this.studentRepository.findAll();
     }
 
-    public ResponseDTO findById(final int id) {
-        if (!this.studentRepository.existsById(id)) {
-            throw new UserNotFoundException(Constant.ID_DOES_NOT_EXIST);
-        }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE,
-                this.studentRepository.findById(id));
+    public Student findById(final int id) {
+        return this.studentRepository.findById(id).orElseThrow(() -> new RuntimeException(Constant.ID_DOES_NOT_EXIST));
+
     }
 
-    public ResponseDTO deleteById(final int id) {
+    public String deleteById(final int id) {
         if (this.studentRepository.existsById(id)) {
             this.studentRepository.deleteById(id);
+        } else {
+            throw new UserNotFoundException(Constant.NOT_FOUND + " " + id);
         }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE,
-                Constant.REMOVE);
+        return Constant.REMOVE;
     }
 
 
     @Transactional
-    public ResponseDTO updateById(final Student student, final int id) {
+    public Student updateById(final Student student, final int id) {
         final Student studentObject = this.studentRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(Constant.ID_DOES_NOT_EXIST));
         if (student.getFirstName() != null) {
@@ -70,44 +65,58 @@ public class StudentService {
             studentObject.setContactNumber(student.getContactNumber());
         }
 
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE,
-                this.studentRepository.save(studentObject));
+        return this.studentRepository.save(studentObject);
     }
 
-//    public List<StudentDetailsDTO>getStudent(int id){
-//        return studentRepository.findStudent(id);
+    //    public Page<Student> getStudentCourse(final int pageIndex, final int pageSize) {
+//        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+//        return this.studentRepository.findAll(pageable);
 //    }
 
 
-    public Page<Student> getStudentCourse(final int pageIndex, final int pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-        return this.studentRepository.findAll(pageable);
+    public PaginationResponse getSortedStudentPage(final int pageIndex, final int pageSize, final String field, final boolean sort) {
+        if (pageIndex < 0 || pageSize <= 0) {
+            throw new RuntimeException(Constant.NOT_FOUND);
+        }
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(sort ? Sort.Direction.ASC : Sort.Direction.DESC, field));
+        Page<Student> studentPage = this.studentRepository.findAll(pageable);
+        return new PaginationResponse(
+                studentPage.getTotalPages(),
+                studentPage.getTotalElements(),
+                studentPage.getSize(),
+                studentPage.getContent()
+        );
     }
 
-    public Page<Student> getStudentCoursePage(final int pageIndex, final int pageSize, final String field, final boolean direction) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(direction ? Sort.Direction.ASC : Sort.Direction.DESC, field));
-//        Pageable pageable = PageRequest.of(pageIndex, pageSize,sort);
-        return this.studentRepository.findAll(pageable);
-    }
-//public Page<Student> getStudentCoursePage(final int pageIndex, final int pageSize, final String field, final boolean direction) {
-//    String sortField = (field == null || field.isEmpty()) ? "id" : field; // Default sorting by "id"
+
+//    public PageDTO getStudentCoursePage2(final int pageIndex, final int pageSize, final String field, final boolean direction) {
+//        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(direction ? Sort.Direction.ASC : Sort.Direction.DESC, field));
+//        Page<Student> studentPage=this.studentRepository.findAll(pageable);
+//        return  new PageDTO(
+//                studentPage.getTotalPages(),
+//                studentPage.getTotalElements(),
+//                studentPage.getSize(),
+//                studentPage.getContent()
+//        );
+//
+//    }
+
+
+//public List<Student> getStudentCoursePage(final int pageIndex, final int pageSize, final String field, final boolean direction) {
+//    String sortField = (field == null || field.isEmpty()) ? "id" : field;
 //    Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(direction ? Sort.Direction.ASC : Sort.Direction.DESC, sortField));
-//    return this.studentRepository.findAll(pageable);
+//    return this.studentRepository.findAll(pageable).toList();
 //}
 
-    public List<Student> search(String keyword) {
-//        if(z==null||z.trim().isEmpty()){
-//            return null;
-//        }else {
-        return this.studentRepository.findByStudent_SchoolName(keyword);
-//        }
-    }
-
-    public Page<Student> searchDetails(int pageIndex, int pageSize, String keyword) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize);
-        return this.studentRepository.findByStudent_School(keyword, pageable);
-
-    }
+//    public List<Student> searchStudents(String keyword) {
+////        return this.studentRepository.findByStudentAndSchoolName(keyword);
+////    }
+//
+//    public Page<Student> getStudentsBySearchPage(int pageIndex, int pageSize, String keyword) {
+//        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+//        return this.studentRepository.findByStudentAndSchool(keyword, pageable);
+//
+//    }
 
     public List<StudentDetailsDTO> getStudentWithCourses(int id) {
         return studentRepository.findStudentWithCourses(id);

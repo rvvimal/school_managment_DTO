@@ -1,14 +1,12 @@
 package com.school_management.service;
 
 
-import com.school_management.dto.ResponseDTO;
 import com.school_management.dto.TutorSalaryDTO;
 import com.school_management.entity.TutorSalary;
 import com.school_management.exception.UserNotFoundException;
 import com.school_management.repository.TutorSalaryRepository;
 import com.school_management.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,33 +19,30 @@ public class TutorSalaryService {
     private TutorSalaryRepository tutorSalaryRepository;
 
     @Transactional
-    public ResponseDTO createTutorSalary(final TutorSalary tutorSalary) {
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.tutorSalaryRepository.save(tutorSalary));
+    public TutorSalary createTutorSalary(final TutorSalary tutorSalary) {
+        return this.tutorSalaryRepository.save(tutorSalary);
     }
 
-    public ResponseDTO getAlltutorSalary() {
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.tutorSalaryRepository.findAll());
+    public List<TutorSalary> getAlltutorSalary() {
+        return this.tutorSalaryRepository.findAll();
     }
 
-    public ResponseDTO findById(final int id) {
-        if (!this.tutorSalaryRepository.existsById(id)) {
-            throw new UserNotFoundException(Constant.ID_DOES_NOT_EXIST);
-        }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE,
-                this.tutorSalaryRepository.findById(id));
+    public TutorSalary findById(final int id) {
+        return this.tutorSalaryRepository.findById(id).orElseThrow(() -> new RuntimeException(Constant.ID_DOES_NOT_EXIST));
     }
 
 
-    public ResponseDTO deleteById(final int id) {
+    public String deleteById(final int id) {
         if (this.tutorSalaryRepository.existsById(id)) {
             this.tutorSalaryRepository.deleteById(id);
+        } else {
+            throw new UserNotFoundException(Constant.NOT_FOUND + " " + id);
         }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE,
-                Constant.REMOVE);
+        return Constant.REMOVE;
     }
 
     @Transactional
-    public ResponseDTO updateById(final TutorSalary tutorSalary, final int id) {
+    public TutorSalary updateById(final TutorSalary tutorSalary, final int id) {
         final TutorSalary tutorSalaryObject = this.tutorSalaryRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(Constant.ID_DOES_NOT_EXIST));
 
@@ -61,11 +56,11 @@ public class TutorSalaryService {
         if (tutorSalary.getPaid() != null) {
             tutorSalaryObject.setPaid(tutorSalary.getPaid());
         }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, this.tutorSalaryRepository.save(tutorSalaryObject));
+        return this.tutorSalaryRepository.save(tutorSalaryObject);
     }
 
 
-    public List<TutorSalaryDTO> amount(int id) {
+    public List<TutorSalaryDTO> getFeeAmount(int id) {
         List<TutorSalaryDTO> tutorSalaryDTOS = new ArrayList<>();
         List<TutorSalary> tutorSalaries = this.tutorSalaryRepository.findByTutor_School_Id(id);
         for (TutorSalary tutorSalary : tutorSalaries) {

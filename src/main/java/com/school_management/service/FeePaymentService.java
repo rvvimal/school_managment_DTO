@@ -1,6 +1,5 @@
 package com.school_management.service;
 
-import com.school_management.dto.ResponseDTO;
 import com.school_management.dto.SchoolFeeDetailsDTO;
 import com.school_management.entity.FeePayment;
 import com.school_management.exception.UserNotFoundException;
@@ -8,7 +7,6 @@ import com.school_management.repository.FeePaymentRepository;
 import com.school_management.util.Constant;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,32 +18,29 @@ public class FeePaymentService {
     private FeePaymentRepository feePaymentRepository;
 
     @Transactional
-    public ResponseDTO createFeePayment(final FeePayment feePayment) {
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.feePaymentRepository.save(feePayment));
+    public FeePayment createFeePayment(final FeePayment feePayment) {
+        return this.feePaymentRepository.save(feePayment);
     }
 
-    public ResponseDTO getAllFeePayment() {
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.feePaymentRepository.findAll());
+    public List<FeePayment> getAllFeePayment() {
+        return this.feePaymentRepository.findAll();
     }
 
-    public ResponseDTO findById(final int id) {
-        if (!this.feePaymentRepository.existsById(id)) {
-            throw new UserNotFoundException(Constant.ID_DOES_NOT_EXIST);
-        }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.feePaymentRepository.findById(id));
+    public FeePayment findById(final int id) {
+        return this.feePaymentRepository.findById(id).orElseThrow(() -> new RuntimeException(Constant.ID_DOES_NOT_EXIST));
     }
 
-    public ResponseDTO deleteById(final int id) {
+    public String deleteById(final int id) {
         if (this.feePaymentRepository.existsById(id)) {
             this.feePaymentRepository.deleteById(id);
         } else {
-            throw new UserNotFoundException(Constant.FOUND);
+            throw new UserNotFoundException(Constant.NOT_FOUND + " " + id);
         }
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, Constant.REMOVE);
+        return Constant.REMOVE;
     }
 
     @Transactional
-    public ResponseDTO updateById(final FeePayment feePayment, final int id) {
+    public FeePayment updateById(final FeePayment feePayment, final int id) {
         final FeePayment feePaymentObject = this.feePaymentRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(Constant.ID_DOES_NOT_EXIST));
 
@@ -62,7 +57,7 @@ public class FeePaymentService {
             feePaymentObject.setTerm(feePayment.getTerm());
         }
 
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, this.feePaymentRepository.save(feePaymentObject));
+        return this.feePaymentRepository.save(feePaymentObject);
     }
 
     public List<SchoolFeeDetailsDTO> getfeepayment() {

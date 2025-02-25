@@ -5,54 +5,52 @@ import com.school_management.dto.SchoolDTO;
 import com.school_management.dto.SchoolDetailsDTO;
 import com.school_management.entity.StudentCourse;
 import com.school_management.service.StudentCourseService;
+import com.school_management.util.Constant;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/studentCourse")
+@RequestMapping("/api/v1")
 public class StudentCourseController {
 
     @Autowired
     private StudentCourseService studentCourseService;
 
-    @PostMapping("/create")
-    private ResponseDTO createStudentCourse(@RequestBody final StudentCourse studentCourse) {
-        return this.studentCourseService.createStudentCourse(studentCourse);
+    @PostMapping("/studentCourse")
+    private ResponseDTO createStudentCourse(@Valid @RequestBody final StudentCourse studentCourse) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.studentCourseService.createStudentCourse(studentCourse));
     }
 
-    @GetMapping("/retrieve")
+    @GetMapping("/studentCourse")
     private ResponseDTO getAllStudentCourse() {
-        return this.studentCourseService.getAllStudentCourse();
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.studentCourseService.getAllStudentCourse());
     }
 
-    @GetMapping("/{studentCourseId}")
-    private ResponseDTO getStudentCourseById(@PathVariable final int studentCourseId) {
-        return this.studentCourseService.findById(studentCourseId);
+    @GetMapping("/studentCourse/{id}")
+    private ResponseDTO getStudentCourseById(@PathVariable final int id) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.studentCourseService.findById(id));
     }
 
-    @GetMapping("/retrieve-all-student")
+    @GetMapping("/studentCourse/retrieve-all-student")
     public ResponseDTO retrieveAllStudentCourseDetail() {
-        return this.studentCourseService.retrieveAllStudentDetail();
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.studentCourseService.retrieveAllStudentDetail());
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/studentCourse/{id}")
     public ResponseDTO deleteStudentCourseById(@PathVariable final int id) {
-        return this.studentCourseService.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, this.studentCourseService.deleteById(id));
     }
 
-    @GetMapping("/pagination")
-    public Page<StudentCourse> getStudentCoursePage(@RequestParam final int pageIndex, @RequestParam final int pageSize, @RequestParam String field) {
-        return this.studentCourseService.getStudentCoursePage(pageIndex, pageSize, field);
+    @GetMapping("/studentCourse/{schoolId}/page")
+    public Page<SchoolDetailsDTO> schoolPages(@PathVariable int schoolId, @RequestParam final int pageIndex, @RequestParam final int pageSize) {
+        return this.studentCourseService.getSchoolPages(schoolId, pageIndex, pageSize);
     }
 
-    @GetMapping("/pageSchool/{schoolId}")
-    public Page<SchoolDetailsDTO> pages(@PathVariable int schoolId, @RequestParam final int pageIndex, @RequestParam final int pageSize) {
-        return this.studentCourseService.pages(schoolId, pageIndex, pageSize);
-    }
-
-    @GetMapping("/countCourse/{id}")
-    public SchoolDTO count(@PathVariable Integer id) {
-        return this.studentCourseService.getCount(id);
+    @GetMapping("/studentCourse/{id}/countCourse")
+    public SchoolDTO courseCount(@PathVariable Integer id) {
+        return this.studentCourseService.getCourseCount(id);
     }
 }

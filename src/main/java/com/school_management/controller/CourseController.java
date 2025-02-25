@@ -3,37 +3,40 @@ package com.school_management.controller;
 import com.school_management.dto.ResponseDTO;
 import com.school_management.entity.Course;
 import com.school_management.service.CourseService;
+import com.school_management.util.Constant;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/course")
+@RequestMapping("/api/v1")
 public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @PostMapping("/create")
-    private ResponseDTO createCourse(@RequestBody final Course course) {
-        return this.courseService.createCourse(course);
+    @PostMapping("/course")
+    private ResponseDTO createCourse(@Valid @RequestBody final Course course) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.courseService.createCourse(course));
     }
 
-    @GetMapping("/retrieve")
+    @GetMapping("/course")
     private ResponseDTO getAllCourse() {
-        return this.courseService.getAllCourse();
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.courseService.getAllCourse());
     }
 
-    @GetMapping("/{courseId}")
-    private ResponseDTO getCourseById(@PathVariable final int courseId) {
-        return this.courseService.findById(courseId);
+    @GetMapping("/course/{id}")
+    private ResponseDTO getCourseById(@PathVariable final int id) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, this.courseService.findById(id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/course/{id}")
     public ResponseDTO deleteCourseById(@PathVariable final int id) {
-        return this.courseService.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, this.courseService.deleteById(id));
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseDTO updateById(@PathVariable final int id, @RequestBody final Course course) {
-        return this.courseService.updateById(course, id);
+    @PutMapping("/course/{id}")
+    public ResponseDTO updateById(@Valid @PathVariable final int id, @RequestBody final Course course) {
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, this.courseService.updateById(course, id));
     }
 }

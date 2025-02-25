@@ -1,6 +1,7 @@
 package com.school_management.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ public class TutorCourse {
     @Id
     @Column(name = "id")
     private int id;
+    @Size(min = 4, message = "Size should be greater than four")
     @ManyToOne()
     @JoinColumn(name = "course_id")
     private Course course;
